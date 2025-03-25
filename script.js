@@ -77,7 +77,7 @@ class Player extends GameObject {
         ctx.textBaseline = "middle"; // Выравнивание по вертикали по центру
 
         // Рисуем текст (имя и счёт)
-        ctx.fillText(${this.name}, this.x, this.y);
+        ctx.fillText(`${this.name}`, this.x, this.y);
     }
 }
 
@@ -87,7 +87,7 @@ class Bot extends GameObject {
             Math.random() * canvas.width,
             Math.random() * canvas.height,
             15 + Math.random() * 10,
-            hsl(${Math.random() * 360}, 50%, 50%)
+            `hsl(${Math.random() * 360}, 50%, 50%)`
         );
         this.speed = 2.5;
         this.target = null;
@@ -97,7 +97,7 @@ class Bot extends GameObject {
     update(player, foods, enemies) {
         this.thinkingTimer--;
 
-        if (this.thinkingTimer <= 0  !this.target  this.target.radius <= 0) {
+        if (this.thinkingTimer <= 0 || !this.target || this.target.radius <= 0) {
             this.chooseStrategy(player, foods, enemies);
             this.thinkingTimer = 60 + Math.random() * 60;
         }
@@ -124,6 +124,7 @@ class Bot extends GameObject {
         const dangerousEnemies = enemies.filter(e =>
             e.radius > this.radius * 0.8 && this.distanceTo(e) < 400
         );
+
         if (dangerousEnemies.length > 0) {
             const closest = dangerousEnemies.reduce((a, b) =>
                 this.distanceTo(a) < this.distanceTo(b) ? a : b
@@ -140,7 +141,7 @@ class Bot extends GameObject {
             const closestFood = foods.reduce((a, b) =>
                 this.distanceTo(a) < this.distanceTo(b) ? a : b
             );
-            this.target = closestFood  { x: Math.random() * canvas.width, y: Math.random() * canvas.height };
+            this.target = closestFood || { x: Math.random() * canvas.width, y: Math.random() * canvas.height };
         }
     }
 }
@@ -172,7 +173,7 @@ class Enemy extends GameObject {
         this.x += Math.cos(this.angle) * this.speed;
         this.y += Math.sin(this.angle) * this.speed;
 
-        if (this.x < 0  this.x > canvas.width) this.angle = Math.PI - this.angle;
+        if (this.x < 0 || this.x > canvas.width) this.angle = Math.PI - this.angle;
         if (this.y < 0 || this.y > canvas.height) this.angle = -this.angle;
     }
 }
@@ -200,7 +201,7 @@ function checkCollisions() {
         if (player.distanceTo(food) < player.radius) {
             player.radius += 0.3;
             player.score += 10;
-            scoreElement.textContent = Score: ${player.score};
+            scoreElement.textContent = `Score: ${player.score}`;
             return false;
         }
         return true;
@@ -224,7 +225,7 @@ function checkCollisions() {
                 // Игрок съедает врага
                 player.radius += enemy.radius * 0.3;
                 player.score += enemy.radius * 10; // Увеличиваем счет
-                scoreElement.textContent = Score: ${player.score};
+                scoreElement.textContent = `Score: ${player.score}`;
                 enemies.splice(index, 1); // Удаляем врага
             } else {
                 gameOver();
@@ -239,7 +240,7 @@ function checkCollisions() {
                 // Игрок съедает бота
                 player.radius += bot.radius * 0.3;
                 player.score += bot.radius * 10; // Увеличиваем счет
-                scoreElement.textContent = Score: ${player.score};
+                scoreElement.textContent = `Score: ${player.score}`;
                 bots.splice(index, 1); // Удаляем бота
             } else if (bot.radius > player.radius * 1.2) {
                 // Бот съедает игрока
@@ -247,6 +248,7 @@ function checkCollisions() {
             }
         }
     });
+
     // Проверка столкновений ботов с врагами
     bots.forEach((bot, index) => {
         enemies.forEach((enemy, enemyIndex) => {
@@ -302,7 +304,7 @@ function gameLoop() {
 function gameOver() {
     cancelAnimationFrame(animationFrameId); // Используем текущий идентификатор
     startBtn.style.visibility = "visible";
-    startBtn.innerText = ПЕРЕЗАГРУЗКА... \n\nНабрано очков: ${player.score}
+    startBtn.innerText = `ПЕРЕЗАГРУЗКА... \n\nНабрано очков: ${player.score}`
     
     console.log("Game over, animation stopped with ID:", animationFrameId);
     document.location.reload();
