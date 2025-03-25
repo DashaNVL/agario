@@ -124,7 +124,7 @@ class Bot extends GameObject {
         const dangerousEnemies = enemies.filter(e =>
             e.radius > this.radius * 0.8 && this.distanceTo(e) < 400
         );
-      if (dangerousEnemies.length > 0) {
+        if (dangerousEnemies.length > 0) {
             const closest = dangerousEnemies.reduce((a, b) =>
                 this.distanceTo(a) < this.distanceTo(b) ? a : b
             );
@@ -247,7 +247,7 @@ function checkCollisions() {
             }
         }
     });
-  // Проверка столкновений ботов с врагами
+    // Проверка столкновений ботов с врагами
     bots.forEach((bot, index) => {
         enemies.forEach((enemy, enemyIndex) => {
             if (bot.distanceTo(enemy) < bot.radius + enemy.radius) {
